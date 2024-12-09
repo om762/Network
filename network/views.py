@@ -1,10 +1,11 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
+from django.core.paginator import Paginator
 from django.urls import reverse
 
-from .models import User
+from .models import User, Post
 
 
 def index(request):
@@ -61,3 +62,37 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "network/register.html")
+
+def posts(request):
+    page = int(request.GET.get('page') or 1)
+    
+    all_posts = Post.objects.all().order_by('-post_at')
+    
+    paginator = Paginator(all_posts, 10)
+    try:
+        posts = paginator.page(page)
+    except:
+        return JsonResponse({'message':'Invalid Page Number'}, status=400)
+    
+    post_data = []
+    for post in posts:
+        post_data.append({
+            'content': post.content,
+            'poster': {
+                'id': post.poster.id,
+                'username': post.poster.username,  # Adjust according to your User model
+            },
+            'posting_date': post.post_at,
+            'update_at': post.update_at
+        })
+        
+    page_data = {
+        "current_page": page,
+        "total_pages": paginator.num_pages,
+        "has_next": posts.has_next(),
+        "has_previous": posts.has_previous(),
+    }
+    return JsonResponse({
+        'page_data':page_data,
+        'posts':post_data
+        }, safe=False)
