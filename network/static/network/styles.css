@@ -68,6 +68,7 @@ nav input{
   list-style: none;
 }
 
+
 .nav-links li a {
   color: #f2f2f2;
   color: #f2f2f2;
@@ -77,6 +78,10 @@ nav input{
   padding: 9px 15px;
   border-radius: 5px;
   transition: all 0.3s ease;
+}
+
+.nav-links li a span {
+  margin-left: 2px;
 }
 
 .nav-links li a:hover {

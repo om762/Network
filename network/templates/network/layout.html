@@ -3,6 +3,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>
       {% block title %}
         Social Network
@@ -16,7 +17,7 @@
     <nav>
       <div class="navdiv">
         <!-- Logo -->
-        <div id="logo"><a href="#"><img src="{% static 'network/img/network_logo.png' %}" alt="Network logo" /><span>Network</span></a></div>
+        <div id="logo"><a href="/"><img src="{% static 'network/img/network_logo.png' %}" alt="Network logo" /><span>Network</span></a></div>
 
         <!-- Menu Button for Small Screens -->
         <input type="radio" name="slider" id="menu-btn">
@@ -29,12 +30,12 @@
           <!-- Close button icon -->
           <label for="close-btn" class="btn close-btn"><i data-feather="x"></i></label>
 
+          {% if user.is_authenticated %}
+            <!-- New Post  -->
+            <li><a href="#"><i data-feather="pen-tool"></i><span>New Post</span></a></li>
+          {% endif %}
           <li><a href="#"><i data-feather="trending-up"></i><span>All Posts</span></a></li>
           {% if user.is_authenticated %}
-
-            <!-- Home -->
-            <li><a href="#"><i data-feather="home"></i><span>Home</span></a></li>
-
             <!-- Following -->
             <li><a href="#"><i data-feather="users"></i><span>Following</span></a></li>
 
@@ -45,13 +46,9 @@
               <label for="showDrop" class="mobile"><i data-feather="user"></i><span><strong>{{ user.username }}</strong></span></label>
               <!-- Dropdown Items -->
               <ul class="drop-menu">
-                <li><a class="nav-link" href="#"><i data-feather="user"></i><span><strong>View Profile</strong></span></a></li>
-                <li><a class="nav-link" href="{% url 'logout' %}"><i data-feather="log-out"></i><span><strong>View Profile</strong></span></a></li>
+                <li><a class="nav-link" href="#"><i data-feather="user"></i><span><strong>Profile</strong></span></a></li>
+                <li><a class="nav-link" href="{% url 'logout' %}"><i data-feather="log-out"></i><span><strong>Logout</strong></span></a></li>
               </ul>
-            </li>
-
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
             </li>
           {% else %}
             <li class="nav-item">
