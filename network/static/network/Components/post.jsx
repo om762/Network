@@ -1,23 +1,23 @@
 function Post() {
   return (
     <div>
-      <div class="post-container">
-        <div class="profile-info">
-          <div class="profile-letter">
+      <div className="post-container">
+        <div className="profile-info">
+          <div className="profile-letter">
             <span>K</span>
           </div>
-          <div class="user-info">
+          <div className="user-info">
             <div>
               <span><a href="user-profile-url">Kashish </a></span>
               ·
-              <span><a class="follow-link" href="follow"> Follow</a></span>
+              <span><a className="follow-link" href="follow"> Follow</a></span>
             </div>
-            <div class="profile-time-div">
+            <div className="profile-time-div">
               <span>19 hours ago</span>
             </div>
           </div>
         </div>
-        <div class="post-content-div">
+        <div className="post-content-div">
           Love you :💞
         </div>
       </div>
@@ -29,4 +29,4 @@ function App() {
   return <Post />;
 }
 
-ReactDOM.render(<App />, document.querySelector('#app'));
+ReactDOM.createRoot(document.getElementById('app')).render(<App />);
