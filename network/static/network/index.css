@@ -1,0 +1,73 @@
+body {
+  background-color: #f2f4f7;
+}
+
+.post-container {
+  max-width: 600px;
+  margin: auto;
+  padding: 10px;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;  border-radius: 10px;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.profile-info {
+  padding: 5px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  width: fit-content;
+  border-radius: 10px;
+  padding-right: 10px;
+  align-items: center;
+  justify-content: left;
+}
+
+.profile-letter {
+  margin-right: 10px;
+  width: 35px;
+  height: 35px;
+  font-size: 24px;
+  border: 1px solid;
+  border-radius: 50px;
+  background-color: rgb(255, 255, 255);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.profile-letter span {
+  font-weight: 500;
+}
+
+.profile-time-div {
+  margin-top: 4px;
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.503);
+}
+
+.user-info span a:hover {
+  text-decoration: underline;
+}
+
+.user-info span a {
+  color: black;
+  text-decoration: none;
+}
+
+.user-info span .follow-link {
+  color: #0064d1;
+}
+
+
+.post-content-div {
+  border: 1px solid rgb(157, 157, 157);
+  padding: 10px;
+  font-weight: 500;
+  border-radius: 10px;
+  user-select: none;
+  font-family: cursive;
+}
+
+
+
