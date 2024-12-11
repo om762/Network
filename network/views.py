@@ -77,6 +77,7 @@ def posts(request):
     post_data = []
     for post in posts:
         post_data.append({
+            'id': post.id,
             'content': post.content,
             'poster': {
                 'id': post.poster.id,

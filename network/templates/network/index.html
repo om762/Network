@@ -1,17 +1,129 @@
 {% extends "network/layout.html" %}
 {% load static %}
 
-{% block title %}Network - All Posts{% endblock title %}
+{% block title %}
+  Network - All Posts
+{% endblock title %}
 {% block head %}
-<link rel="stylesheet" href="{% static 'network/index.css' %}">
-<script defer src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
-<script defer src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
-<script defer src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-{% endblock %}
+  <link rel="stylesheet" href="{% static 'network/index.css' %}">
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+{% endblock head %}
+
 {% block body %}
-<div id="app"></div>
+  <textarea name="newPost" id="new_post"></textarea>
+  <button type="button">Post</button>
 
-<script type="text/babel" src="{% static 'network/Components/post.jsx' %}"></script>
+  <!-- Posts React App -->
+  <div id="App"></div>
+
+  <script type="text/babel">
 
 
+    // A post Component 
+    function Post({postData}) {
+      return (
+        <div className="post-container">
+        <div className="profile-info">
+          <div className="profile-letter">
+            <span>{postData.poster.username.charAt(0).toUpperCase()}</span>
+          </div>
+          <div className="user-info">
+            <div>
+              <span><a href={`/user/${postData.poster.id}/profile`}>{postData.poster.username}</a></span>
+              <span>&middot;</span>
+              <span><a className="follow-link" href={`/${postData.poster.id}/follow`}>Follow</a></span>
+            </div>
+            <div className="profile-time-div">
+              <span>{new Date(postData.update_at).toLocaleString()}</span>
+            </div>
+          </div>
+        </div>
+        <div className="post-content-div">{postData.content}</div>
+      </div>
+      );
+    }
+
+    // Pagination Button Component
+    function Pagination(pageInfo, loadFun) {
+
+      function pageChange(toPage) {
+        if (0 < toPage && toPage >= totalPages) {
+          loadFun(toPage)
+        }
+      }
+
+      return (
+        <div className="pagination">
+          <button onClick={() => pageChange(pageInfo.currentPage - 1)} className={pageInfo.hasPrevious ? "previous-button enable-button": 'previous-button'} >&lArr;Back</button>
+          <span>{pageInfo.currentPage} of {pageInfo.totalPage}</span>
+          <button onClick={() => pageChange(pageInfo.currentPage + 1)} className={pageInfo.hasPrevious ? "next-button enable-button": 'next-button'}>Next&rArr;</button>
+        </div>
+      )
+    }
+
+
+    // Posts App for loading and Managing posts
+
+    function PostsApp() {
+
+      const [isLoading, setLoading] = React.useState(true)
+      const [postList, setPostList] = React.useState([])
+      const [pageData, setPageData] = React.useState({
+        currentPage: 1,
+        totalPage: 1,
+        hasPrevious: false,
+        hasNext: false
+      })
+      
+      // Function for loading Post data and Page data then setting them in state
+      function loadPostData(pageNumber = 1) {
+
+        setLoading(true)
+        fetch(`/posts?page=${pageNumber}`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Failed to fetch posts');
+          }
+          return response.json();
+        })
+        .then(data => {
+          setPostList(data.posts)
+          setPageData(data.page_data)
+          setLoading(false)
+        })
+      }
+
+
+      // Load first default page
+      React.useEffect(() => {
+        loadPostData(); // This will load the data when the component mounts.
+      }, []);
+
+
+      if (isLoading) {
+        return (
+          <div className="loading-div">Loading...</div>
+        )
+      }
+
+      if (postList.length === 0) {
+        return (
+          <div>There are no Post. Post Something.</div>
+        )}
+
+      return (
+        <>
+          {postList.map(post => (
+            <Post key={post.id} postData={post} />
+          ))}
+          <Pagination pageInfo={pageData} loadFun={loadPostData}/>
+          </>
+        )
+    }
+
+
+    ReactDOM.createRoot(document.getElementById('App')).render(<PostsApp />);
+  </script>
 {% endblock %}

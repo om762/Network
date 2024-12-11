@@ -38,7 +38,7 @@ nav .navdiv {
 #logo a{
   color: #f2f2f2;
   font-size: 30px;
-  font-weight: 600;
+  font-weight: 100;
   text-decoration: none;
 }
 
@@ -49,10 +49,10 @@ nav .navdiv {
 }
 
 #logo span {
-  margin: 0 2px;
+  margin: 0 10px;
   padding: 0;
   font-size: 45px;
-  font-weight: 400px;
+  font-weight: 100;
 }
 
 nav input{
@@ -227,8 +227,6 @@ nav input{
 /* Body */
 
 .body {
-  
-  position: absolute;
-  top: 100px;
-  width: 100%;
+  padding-top: 100px;
 }
+

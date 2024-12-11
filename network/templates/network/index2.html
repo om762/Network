@@ -1,0 +1,134 @@
+{% extends "network/layout.html" %}
+{% load static %}
+
+{% block title %}Network - All Posts{% endblock title %}
+{% block head %}
+<link rel="stylesheet" href="{% static 'network/index.css' %}">
+<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+{% endblock %}
+{% block body %}
+<div id="app"></div>
+
+<script type="text/babel">
+
+  const { useState, useEffect } = React;
+
+  function Post({ postData }) {
+    return (
+      <div className="post-container">
+        <div className="profile-info">
+          <div className="profile-letter">
+            <span>{postData.poster.username.charAt(0).toUpperCase()}</span>
+          </div>
+          <div className="user-info">
+            <div>
+              <span>
+                <a href={`/user/${postData.poster.id}/profile`}>{postData.poster.username}</a>
+              </span>
+              <span>
+                &middot;
+              </span>
+              <span>
+                <a className="follow-link" href={`/${postData.poster.id}/follow`}>Follow</a>
+              </span>
+            </div>
+            <div className="profile-time-div">
+              <span>{new Date(postData.update_at).toLocaleString()}</span>
+            </div>
+          </div>
+        </div>
+        <div className="post-content-div">
+          {postData.content}
+        </div>
+      </div>
+    );
+  }
+
+  function Posts() {
+    const [posts, setPosts] = useState([]);
+    const [pageData, setPageData] = useState({
+      current_page: 1,
+      total_pages: 1,
+      has_next: false,
+      has_previous: false,
+    });
+    const [loading, setLoading] = useState(true);
+
+    const fetchPosts = (page = 1) => {
+      setLoading(true);
+      fetch(`/posts?page=${page}`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Failed to fetch posts');
+          }
+          return response.json();
+        })
+        .then(data => {
+          setPosts(data.posts);
+          setPageData(data.page_data);
+          setLoading(false);
+        })
+        .catch(error => {
+          console.error('Error fetching posts:', error);
+          setLoading(false);
+        });
+    };
+
+    useEffect(() => {
+      fetchPosts(pageData.current_page);
+    }, []);
+
+    const handlePageChange = (newPage) => {
+      if (newPage > 0 && newPage <= pageData.total_pages) {
+        fetchPosts(newPage);
+      }
+    };
+
+    return (
+      <div>
+        {loading ? (
+          <div>Loading...</div>
+        ) : (
+          <>
+            {posts.length > 0 ? (
+              posts.map(post => <Post key={post.id} postData={post} />)
+            ) : (
+              <div>No posts available.</div>
+            )}
+            <div className="pagination">
+              <button
+                onClick={() => handlePageChange(pageData.current_page - 1)}
+                disabled={!pageData.has_previous}
+              >
+                Previous
+              </button>
+              <span>Page {pageData.current_page} of {pageData.total_pages}</span>
+              <button
+                onClick={() => handlePageChange(pageData.current_page + 1)}
+                disabled={!pageData.has_next}
+              >
+                Next
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+    );
+  }
+
+  function App() {
+    return (
+      <div>
+        <h1>All Posts</h1>
+        <Posts />
+      </div>
+    );
+  }
+
+  ReactDOM.createRoot(document.getElementById('app')).render(<App />);
+
+</script>
+
+{% endblock %}
