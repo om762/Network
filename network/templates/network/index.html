@@ -83,19 +83,19 @@
     }
 
     // Pagination Button Component
-    function Pagination(pageInfo, loadFun) {
+    function Pagination({pageInfo, loadFun}) {
 
       function pageChange(toPage) {
-        if (0 < toPage && toPage >= totalPages) {
+        if (toPage > 0 && toPage <= pageInfo.total_pages) {
           loadFun(toPage)
         }
       }
 
       return (
         <div className="pagination">
-          <button onClick={() => pageChange(pageInfo.currentPage - 1)} className={pageInfo.hasPrevious ? "previous-button enable-button": 'previous-button'} >&lArr;Back</button>
-          <span>{pageInfo.currentPage} of {pageInfo.totalPage}</span>
-          <button onClick={() => pageChange(pageInfo.currentPage + 1)} className={pageInfo.hasPrevious ? "next-button enable-button": 'next-button'}>Next&rArr;</button>
+          <button onClick={() => pageChange(pageInfo.current_page - 1)} >&lArr;Back</button>
+          <span>{pageInfo.current_page} of {pageInfo.total_pages}</span>
+          <button onClick={() => pageChange(pageInfo.current_page + 1)}  >Next&rArr;</button>
         </div>
       )
     }

@@ -19,7 +19,7 @@ nav .navdiv {
   max-width: 1300px;
   padding: 0px 30px;
   height: 70px;
-  line-height: 70px;
+  line-height: 35px;
   margin: auto;
   display: flex;
   align-items: center;
@@ -155,16 +155,11 @@ svg {
     box-shadow: 0 15px 15px rgba(0,0,0,0.18);
     transition: all 0.3s ease;
   }
+}
 
   /* custom scroll bar */
   ::-webkit-scrollbar {
-    width: 10px;
-  }
-  ::-webkit-scrollbar-track {
-    background: #242526;
-  }
-  ::-webkit-scrollbar-thumb {
-    background: #3A3B3C;
+    width: 0px;
   }
   #menu-btn:checked ~ .nav-links{
     left: 0%;
@@ -226,7 +221,7 @@ svg {
     border-radius: 5px;
     font-size: 18px;
   }
-}
+
 
 /* Body */
 
@@ -234,5 +229,7 @@ svg {
   padding-top: 100px;
   max-width: 800px;
   margin: auto;
+
+  padding-bottom: 100px;
 }
 
