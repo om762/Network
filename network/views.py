@@ -1,4 +1,5 @@
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
@@ -63,10 +64,20 @@ def register(request):
     else:
         return render(request, "network/register.html")
 
+@login_required(login_url='/login')
+def new_post(request):
+    content = request.POST.get('content')
+    Post.objects.create(poster=request.user, content=content).save()
+    
+    return HttpResponseRedirect('/')
+
+
 def posts(request):
     page = int(request.GET.get('page') or 1)
     
     all_posts = Post.objects.all().order_by('-post_at')
+    for p in all_posts:
+        print(p.post_at)
     
     paginator = Paginator(all_posts, 10)
     try:

@@ -13,22 +13,37 @@
 
 {% block body %}
 
-  <div class="post-container">
-  <div class="profile-info">
-    <div class="profile-letter" style="background-color: rgb(0, 0, 0);">
-      <span>K</span>
-    </div>
-    <div class="user-info">
-      <div>
-        <span><a href="user-profile-url">Kashish</a></span>
-      </div>
+{% if user.is_authenticated %}
+<div class="post-container">
+<div class="profile-info">
+  <div class="profile-letter" style="background-color: rgb(0, 0, 0);">
+    <span>{{ user.username|slice:":1" }}</span>
+  </div>
+  <div class="user-info">
+    <div>
+      <span><a href="user-profile-url">{{ user.username }}</a></span>
     </div>
   </div>
-  <textarea class="new-post-text" placeholder="Write new Post"></textarea>
+</div>
+<form action="{% url 'new_post' %}" method="post">
+  {% csrf_token %}
+  <textarea class="new-post-text" name="content" id="new-post-textarea" placeholder="Write new Post" required></textarea>
   <div class="new-post-button">
-    <button>Post</button>
+    <button type="submit" id="post-submit-button" style="display: none;">Post</button>
   </div>
-  </div>
+</form>
+</div>
+<script>
+  const postTextArea = document.getElementById('new-post-textarea');
+  const postButton = document.getElementById('post-submit-button');
+
+  postButton.style.display = postTextArea.value.trim() ? 'inline-block' : 'none';
+
+  postTextArea.addEventListener('input', () => {
+    postButton.style.display = postTextArea.value.trim() ? 'inline-block' : 'none';
+  });
+</script>
+{% endif %}
 
 
   <h1 class="pageHeading"><i data-feather="trending-up"></i><span></span>All Posts</h1>
