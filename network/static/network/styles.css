@@ -80,6 +80,11 @@ nav input{
   transition: all 0.3s ease;
 }
 
+svg {
+  margin-right: 5px;
+  margin-bottom: -3px;
+}
+
 .nav-links li a span {
   margin-left: 2px;
 }
@@ -223,10 +228,11 @@ nav input{
   }
 }
 
-
 /* Body */
 
 .body {
   padding-top: 100px;
+  max-width: 700px;
+  margin: auto;
 }
 

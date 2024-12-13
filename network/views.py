@@ -81,7 +81,8 @@ def posts(request):
             'content': post.content,
             'poster': {
                 'id': post.poster.id,
-                'username': post.poster.username,  # Adjust according to your User model
+                'username': post.poster.username,
+                'color': post.poster.color
             },
             'posting_date': post.post_at,
             'update_at': post.update_at

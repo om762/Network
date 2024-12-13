@@ -3,7 +3,7 @@
     font-family: Arial, sans-serif;
     color: #00527c;
     margin: auto;
-    height: 100vh;
+    height: calc(100vh - 100px);
     display: flex;
     justify-content: center;
     align-items: center;

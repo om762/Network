@@ -2,15 +2,8 @@ body {
   background-color: #f2f4f7;
 }
 
-
-.pageHeading {
-    text-align: center;
-    margin-top: 40px;
-}
-
-
 .post-container {
-  max-width: 700px;
+  max-width: 600px;
   margin: auto;
   padding: 10px;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;  border-radius: 10px;
@@ -18,7 +11,6 @@ body {
 }
 
 .profile-info {
-  margin-bottom: 15px;
   padding: 5px;
   font-size: 15px;
   font-weight: 700;
@@ -36,8 +28,7 @@ body {
   width: 35px;
   height: 35px;
   font-size: 24px;
-  color: white;
-  border: 1px solid black;
+  border: 1px solid;
   border-radius: 50px;
   background-color: rgb(255, 255, 255);
   display: flex;
@@ -55,10 +46,6 @@ body {
   color: rgba(0, 0, 0, 0.503);
 }
 
-.user-info div span {
-  margin: 0px 4px;
-}
-
 .user-info span a:hover {
   text-decoration: underline;
 }
@@ -72,7 +59,6 @@ body {
   color: #0064d1;
 }
 
-
 .post-content-div {
   border: 1px solid rgb(157, 157, 157);
   padding: 10px;
@@ -81,8 +67,6 @@ body {
   user-select: none;
   font-family: cursive;
 }
-
-
 
 .new-post-text {
   font-family: monospace;
@@ -112,13 +96,7 @@ body {
 
 
 .new-post-button {
-  display: flex;
-  justify-content: end;
-}
-
-.new-post-button button{
   background-color: #2ea44f;
-
   border: 1px solid rgba(27, 31, 35, .15);
   border-radius: 6px;
   color: #fff;
@@ -131,9 +109,7 @@ body {
   padding: 6px 16px;
 }
 
-.new-post-button button:hover {
+.new-post-button:hover {
   background-color: #2c974b;
 }
-
-
 
