@@ -33,7 +33,7 @@
 
           {% if user.is_authenticated %}
             <!-- New Post  -->
-            <li><a href="#"><i data-feather="pen-tool"></i><span>New Post</span></a></li>
+            <li><a href="/#new-post-textarea"><i data-feather="pen-tool" id="new-post-link"></i><span>New Post</span></a></li>
           {% endif %}
           <li><a href="#"><i data-feather="trending-up"></i><span>All Posts</span></a></li>
           {% if user.is_authenticated %}

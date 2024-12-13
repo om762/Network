@@ -232,4 +232,9 @@ svg {
 
   padding-bottom: 100px;
 }
-
+/* 
+.body {
+  scroll-behavior: smooth;
+  scroll-padding-top: 70px; 
+}
+ */
