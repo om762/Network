@@ -179,9 +179,9 @@ All Posts - Network
 
     return (
       <div className="pagination">
-        <button onClick={() => pageChange(pageInfo.current_page - 1)} >&lArr;Back</button>
+        <button onClick={() => pageChange(pageInfo.current_page - 1)}  disabled={!pageInfo.has_previous} >&lArr;Back</button>
         <span>{pageInfo.current_page} of {pageInfo.total_pages}</span>
-        <button onClick={() => pageChange(pageInfo.current_page + 1)}  >Next&rArr;</button>
+        <button onClick={() => pageChange(pageInfo.current_page + 1)} disabled={!pageInfo.has_next}  >Next&rArr;</button>
       </div>
     )
   }

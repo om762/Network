@@ -118,6 +118,8 @@ def posts(request):
         'posts':post_data
         }, safe=False)
 
+
+
 login_required(login_url='/login')
 def like_post(request):
     post_id = request.GET.get('post_id')
