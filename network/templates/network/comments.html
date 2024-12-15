@@ -1,0 +1,38 @@
+{% extends "network/layout.html" %}
+{% load static %}
+
+{% block title %}Post Details{% endblock %}
+
+{% block head %}
+  <link rel="stylesheet" href="{% static 'network/comments.css' %}">
+{% endblock %}
+
+{% block body %}
+<div class="post">
+  <h1>{{ post.content }}</h1>
+  <hr>
+  <div class="post-info">
+    Post by <span>{{ post.poster }}</span>
+    <br>
+    Date: <span>{{ post.post_at }}</span>
+    <hr>
+</div>
+</div>
+<div class="comment-section">
+  <h1>Comments</h1>
+  <hr>
+  <div class="comments">
+  {% for comment in comments %}
+  <div class="comment">
+    <div class="comment-info">
+      <span>{{ comment.commenter }}</span> <p>{{ comment.commented_at }}</p>
+      <hr>
+    </div>
+    <span>
+      {{ comment.comment }}
+    </span>
+  </div>
+  {% endfor %}
+  </div>
+</div>
+{% endblock %}

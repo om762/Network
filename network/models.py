@@ -32,3 +32,15 @@ class Post(models.Model):
     
     def is_liked_by(self, user):
         return self.liked_by.filter(id=user.id).exists()
+    
+    def comment_count(self):
+        return self.comments.count()
+
+class Comment(models.Model):
+    comment_on = models.ForeignKey("network.Post", verbose_name=_("Post"), on_delete=models.CASCADE, related_name='comments')
+    commenter = models.ForeignKey("network.User", verbose_name=_("Commenter"), on_delete=models.CASCADE, related_name='comments')
+    comment = models.TextField(_("Comment"))
+    commented_at = models.DateTimeField(_("Comment Date"), auto_now=True)
+    
+    def __str__(self):
+        return f'"{self.comment}" by {self.commenter}'

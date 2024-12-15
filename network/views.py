@@ -6,7 +6,7 @@ from django.shortcuts import render
 from django.core.paginator import Paginator
 from django.urls import reverse
 
-from .models import User, Post
+from .models import User, Post, Comment
 
 
 def index(request):
@@ -102,7 +102,7 @@ def posts(request):
             'update_at': post.update_at,
             'likes': post.likes(),
             'is_liked': post.is_liked_by(request.user) if request.user.is_authenticated else False,
-            'comments': 0
+            'comments': post.comment_count()
         })
         
     page_data = {
@@ -130,3 +130,14 @@ def like_post(request):
         'likes': post.likes(),
         'is_liked': post.is_liked_by(request.user)
         }) 
+
+def view_comments(request, post_id):
+    if not Post.objects.filter(id=post_id).exists():
+        return HttpResponse(f"There is such Post with id: {post_id}")
+    
+    post = Post.objects.get(id=post_id)
+    comments = Comment.objects.filter(comment_on=post)
+    return render(request, "network/comments.html", {
+        "comments": comments,
+        "post": post
+    })

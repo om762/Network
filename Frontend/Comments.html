@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Post Details</title>
+  <style>
+    /* Post Detail Page */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+      margin: 0;
+      padding: 0;
+    }
+
+    .post-detail-container {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .post-content {
+      margin-bottom: 30px;
+    }
+
+    .post-title {
+      font-size: 24px;
+      font-weight: bold;
+      color: #333;
+      line-height: 1.4;
+    }
+
+    .post-author {
+      font-size: 14px;
+      color: #777;
+    }
+
+    .post-author a {
+      color: #0064d1;
+      text-decoration: none;
+    }
+
+    .post-author a:hover {
+      text-decoration: underline;
+    }
+
+    .comments-section {
+      margin-top: 30px;
+    }
+
+    .comments-section h3 {
+      font-size: 20px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .comments-list {
+      margin-top: 20px;
+    }
+
+    .comment-item {
+      background-color: #f9f9f9;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .comment-author {
+      font-size: 14px;
+      color: #555;
+      margin-bottom: 8px;
+    }
+
+    .comment-username {
+      font-weight: bold;
+    }
+
+    .comment-time {
+      margin-left: 10px;
+      font-style: italic;
+      color: #888;
+    }
+
+    .comment-content {
+      font-size: 16px;
+      color: #444;
+    }
+
+    .comment-author a {
+      color: #0064d1;
+      text-decoration: none;
+    }
+
+    .comment-author a:hover {
+      text-decoration: underline;
+    }
+
+    /* Add Comment Form */
+    .add-comment-form {
+      margin-top: 30px;
+    }
+
+    .add-comment-form textarea {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      resize: none;
+    }
+
+    .add-comment-form button {
+      margin-top: 10px;
+      padding: 10px 15px;
+      font-size: 16px;
+      background-color: #2ea44f;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .add-comment-form button:hover {
+      background-color: #2c974b;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="post-detail-container">
+    <!-- Post Content Section -->
+    <div class="post-content">
+      <h2 class="post-title">This is a Sample Post</h2>
+      <p class="post-author">
+        Posted by <a href="#">JohnDoe</a> on August 20, 2024, 3:00 PM
+      </p>
+    </div>
+
+    <!-- Comments Section -->
+    <div class="comments-section">
+      <h3>Comments</h3>
+      <div class="comments-list">
+        <div class="comment-item">
+          <div class="comment-author">
+            <span class="comment-username">JaneDoe</span>
+            <span class="comment-time">August 20, 2024, 3:15 PM</span>
+          </div>
+          <p class="comment-content">This is a sample comment. I really liked this post!</p>
+        </div>
+        <div class="comment-item">
+          <div class="comment-author">
+            <span class="comment-username">User123</span>
+            <span class="comment-time">August 20, 2024, 3:30 PM</span>
+          </div>
+          <p class="comment-content">Interesting read. Looking forward to more posts like this!</p>
+        </div>
+      </div>
+      <!-- Add Comment Form -->
+      <div class="add-comment-form">
+        <h3>Add a Comment</h3>
+        <form id="commentForm">
+          <textarea id="commentInput" placeholder="Write your comment..." required></textarea>
+          <button type="submit">Post Comment</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // JavaScript to handle adding a comment dynamically
+    document.getElementById('commentForm').addEventListener('submit', function (event) {
+      event.preventDefault(); // Prevent the form from submitting normally
+
+      // Get the value of the comment input
+      const commentText = document.getElementById('commentInput').value.trim();
+      
+      if (commentText) {
+        // Create a new comment item element
+        const newCommentItem = document.createElement('div');
+        newCommentItem.classList.add('comment-item');
+
+        // Add the comment author and content
+        newCommentItem.innerHTML = `
+          <div class="comment-author">
+            <span class="comment-username">NewUser</span>
+            <span class="comment-time">${new Date().toLocaleString()}</span>
+          </div>
+          <p class="comment-content">${commentText}</p>
+        `;
+        
+        // Append the new comment to the comments list
+        document.querySelector('.comments-list').appendChild(newCommentItem);
+
+        // Clear the input field after submission
+        document.getElementById('commentInput').value = '';
+      }
+    });
+  </script>
+
+</body>
+</html>

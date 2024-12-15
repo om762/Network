@@ -67,11 +67,6 @@ All Posts - Network
       };
 
 
-      let c = isLiked ? 'red' : 'none'
-      
-      const heartStyle = {
-        fill: c
-      }
 
       function likePost() {
         fetch(`/like-post?post_id=${postData.id}`)
@@ -83,9 +78,9 @@ All Posts - Network
           return response.json();
         })
         .then(data => {
-          setLikes(data.likes)
-          setIsLiked(data.is_liked)
-        })
+        setLikes(data.likes);
+        setIsLiked(data.is_liked);
+      });
       }
       const heartColor = isLiked ? "red" : "none";
       const likeText = isLiked ? "Liked" : "Like"
@@ -110,32 +105,42 @@ All Posts - Network
         </div>
         <div className="post-content-div">{postData.content}</div>
 
-        <div class="reaction-data">
-      <div class="like-count">
+      <div className="reaction-data">
+        <div className="like-count">
         <i data-feather="heart"></i>
         <span>{likes}</span>
       </div>
-      <div class="comment-count">
-        <span>{comments} Comments</span>
+        <div className="comment-count">
+        <span><a href={`/comments/${postData.id}`}>{comments} Comments</a></span>
       </div>
     </div>
-    <hr/>
-    <div class="reactions">
-      <div class="like-btn-container" onClick={likePost}>
+      <hr />
+      <div className="reactions">
+        <div className="like-btn-container" onClick={likePost}>
         <div>
-          <div class="like-btn">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill={heartColor} stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-heart"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+            <div className="like-btn">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill={heartColor} stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="feather feather-heart">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+              </svg>
             <span>{likeText}</span>
             </div>
         </div>
       </div>
-      <div class="comment-btn-container">
+        <div className="comment-btn-container">
         <div>
-          <div class="comment-btn"><i data-feather="message-square"></i><span>Comment</span></div>
+            <label className="comment-btn" htmlFor={`comment-toggle-${postData.id}`}>
+              <i data-feather="message-square"></i><span>Comment</span>
+            </label>
         </div>
       </div>
     </div>
 
+    <input type="checkbox" id={`comment-toggle-${postData.id}`} className="comment-toggle" />
+
+      <div className="comment-box">
+        <textarea name="comment" className="comment-area" placeholder="Write your comment..."></textarea>
+        <button className="comment-submit-btn">Comment</button>
+      </div>
       </div>
       );
     }
