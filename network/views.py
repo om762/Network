@@ -67,6 +67,8 @@ def register(request):
 @login_required(login_url='/login')
 def new_post(request):
     content = request.POST.get('content')
+    if (content == ''):
+        return HttpResponse('Bad Request, Empty Post Content' , status=400)
     Post.objects.create(poster=request.user, content=content).save()
     
     return HttpResponseRedirect('/')
@@ -74,6 +76,7 @@ def new_post(request):
 
 def posts(request):
     page = int(request.GET.get('page') or 1)
+    
     
     all_posts = Post.objects.all().order_by('-post_at')
     for p in all_posts:
@@ -96,7 +99,10 @@ def posts(request):
                 'color': post.poster.color
             },
             'posting_date': post.post_at,
-            'update_at': post.update_at
+            'update_at': post.update_at,
+            'likes': post.likes(),
+            'is_liked': post.is_liked_by(request.user) if request.user.is_authenticated else False,
+            'comments': 0
         })
         
     page_data = {
@@ -109,3 +115,18 @@ def posts(request):
         'page_data':page_data,
         'posts':post_data
         }, safe=False)
+
+login_required(login_url='/login')
+def like_post(request):
+    post_id = request.GET.get('post_id')
+    try:
+        post = Post.objects.get(id=post_id)
+    except Post.DoesNotExist:
+        return HttpResponse('Bad Request, Post id don\'t exist' , status=400)
+    
+    post.toggle_like(request.user)
+    
+    return JsonResponse({
+        'likes': post.likes(),
+        'is_liked': post.is_liked_by(request.user)
+        }) 

@@ -1,6 +1,3 @@
-body {
-  background-color: #f2f4f7;
-}
 
 
 .pageHeading {
@@ -14,6 +11,7 @@ body {
   margin: auto;
   margin-bottom: 35px;
   padding: 10px;
+  padding-bottom: 0;
   box-shadow: rgb(0 0 0 / 35%) 7px 7px 16px 0px;
   border-radius: 10px;
   font-family: Arial, Helvetica, sans-serif;
@@ -78,12 +76,84 @@ body {
 .post-content-div {
   border: 1px solid rgb(157, 157, 157);
   padding: 10px;
-  font-weight: 500;
+  font-weight: 600;
   border-radius: 10px;
   user-select: none;
   font-family: cursive;
 }
 
+.reaction-data {
+  font-size: 13px;
+  padding-top: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.reaction-data div {
+  align-items: center;
+  display: flex;
+}
+
+.reaction-data div svg {
+  height: 15px;
+  color: red;
+}
+
+.reactions {
+  padding: 5px ;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  color: #6c6c6c;
+  padding-bottom: 3px;
+}
+
+hr {
+  margin-bottom: 0;
+}
+
+.reactions div {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 2px;
+  cursor: pointer;
+  font-weight: 600;
+  border-radius: 5px;
+}
+
+.reactions div:hover {
+  background-color: rgb(210, 210, 210);
+}
+
+.reactions div div {
+  display: flex;
+  padding: 0 2px;
+  padding-bottom: 3px;
+  width: 100%;
+}
+
+.reactions div div svg{
+  height: 20px;
+  transition: fill 1s ease;
+}
+
+
+.like-btn-container .like-btn svg{
+  color: rgb(255, 101, 101); 
+}
+
+.like-btn-container .like-btn svg:hover {
+  color: rgb(255, 0, 0);
+}
+
+.comment-btn-container .comment-btn svg{
+  color: rgb(83, 178, 255); 
+}
+
+.comment-btn-container .comment-btn svg:hover{
+  color: rgb(0, 140, 255); 
+}
 
 
 .new-post-text {

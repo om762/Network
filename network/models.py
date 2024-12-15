@@ -21,3 +21,14 @@ class Post(models.Model):
     post_at = models.DateTimeField(_("Post Date"), auto_now=True)
     update_at = models.DateField(_("Last Update"), auto_now_add=True)
 
+    def toggle_like(self, user):
+        if self.liked_by.filter(id=user.id).exists():
+            self.liked_by.remove(user)
+        else:
+            self.liked_by.add(user)
+    
+    def likes(self):
+        return self.liked_by.count()
+    
+    def is_liked_by(self, user):
+        return self.liked_by.filter(id=user.id).exists()

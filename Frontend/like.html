@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <script defer src="https://unpkg.com/feather-icons"></script>
+  <link rel="stylesheet" href="like.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Post</title>
+</head>
+
+<body>
+  <div class="post-container">
+    <div class="profile-info">
+      <div class="profile-letter" style="background-color: rgb(52, 152, 219);"><span>O</span></div>
+      <div class="user-info">
+        <div><span><a href="/user/1/profile">Om762</a></span><span>·</span><span><a class="follow-link"
+              href="/1/follow">Follow</a></span></div>
+        <div class="profile-time-div"><span>13/12/2024, 05:30:00</span></div>
+      </div>
+    </div>
+    <div class="post-content-div">jds</div>
+    <div class="reaction-data">
+      <div class="like-count">
+        <i data-feather="heart"></i>
+        <span>10</span>
+      </div>
+      <div class="comment-count">
+        <span>20 Comments</span>
+      </div>
+    </div>
+    <hr>
+    <div class="reactions">
+      <div class="like-btn-container">
+        <div>
+          <div class="like-btn"><i data-feather="heart"></i><span>Like</span></div>
+        </div>
+      </div>
+      <div class="comment-btn-container">
+        <div>
+          <div class="comment-btn"><i data-feather="message-square"></i><span>Comment</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin: 50px;">
+    <img src="image.png"  height="70px">
+  </div>
+  <script>
+  window.addEventListener('load', function () {
+    feather.replace()
+  })
+  </script>
+</body>
+
+</html>
