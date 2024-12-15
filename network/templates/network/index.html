@@ -62,12 +62,36 @@ All Posts - Network
     const [isLiked, setIsLiked] = React.useState(postData.is_liked)
     const [comments, setComments] = React.useState(postData.comments)
     const [content, setContent] = React.useState(postData.content)
+    const [commentText, setCommentText] = React.useState("")
 
     const profileLetterStyle = {
       backgroundColor: postData.poster.color || '#3498DB'
     };
+    const heartColor = isLiked ? "red" : "none";
+    const likeText = isLiked ? "Liked" : "Like"
 
+    function submitComment() {
+      if (commentText.trim()) {
+        fetch(`/comment`, {
+          method: 'POST',
+          body: JSON.stringify({
+            post_id: postData.id,
+            commentText: commentText
+          })
+        })
+        .then(response => {
+          if (response.redirected) {
+            setComments(comments + 1)
+            setCommentText("")
+            window.open(response.url)
+          }
+        })
+      }
+    }
 
+    function updateCommentText(event) {
+      setCommentText(event.target.value)
+    }
 
     function likePost() {
       fetch(`/like-post?post_id=${postData.id}`)
@@ -83,8 +107,6 @@ All Posts - Network
           setIsLiked(data.is_liked);
         });
     }
-    const heartColor = isLiked ? "red" : "none";
-    const likeText = isLiked ? "Liked" : "Like"
 
 
     return (
@@ -139,8 +161,8 @@ All Posts - Network
         <input type="checkbox" id={`comment-toggle-${postData.id}`} className="comment-toggle" />
 
         <div className="comment-box">
-          <textarea name="comment" className="comment-area" placeholder="Write your comment..."></textarea>
-          <button className="comment-submit-btn">Comment</button>
+          <textarea name="comment" className="comment-area" onChange={updateCommentText} value={commentText} placeholder="Write your comment..."></textarea>
+          <button className="comment-submit-btn" onClick={submitComment}>Comment</button>
         </div>
       </div>
     );

@@ -1,10 +1,12 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.core.paginator import Paginator
 from django.urls import reverse
+import json
 
 from .models import User, Post, Comment
 
@@ -136,8 +138,19 @@ def view_comments(request, post_id):
         return HttpResponse(f"There is such Post with id: {post_id}")
     
     post = Post.objects.get(id=post_id)
-    comments = Comment.objects.filter(comment_on=post)
+    comments = Comment.objects.filter(comment_on=post).order_by('-commented_at')
     return render(request, "network/comments.html", {
         "comments": comments,
         "post": post
     })
+
+@login_required(login_url='/login')
+@csrf_exempt
+def comment(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        post_id = int(data.get("post_id"))
+        post = Post.objects.get(id=post_id)
+        comment_text = data.get("commentText")
+        Comment.objects.create(comment_on=post, commenter=request.user, comment=comment_text).save()
+        return HttpResponseRedirect(f"/comments/{post_id}")
