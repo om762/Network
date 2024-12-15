@@ -4,7 +4,7 @@
 {% block title %}Post Details{% endblock %}
 
 {% block head %}
-  <link rel="stylesheet" href="{% static 'network/comments.css' %}">
+<link rel="stylesheet" href="{% static 'network/comments.css' %}">
 {% endblock %}
 
 {% block body %}
@@ -16,23 +16,24 @@
     <br>
     Date: <span>{{ post.post_at }}</span>
     <hr>
-</div>
+  </div>
 </div>
 <div class="comment-section">
   <h1>Comments</h1>
   <hr>
   <div class="comments">
-  {% for comment in comments %}
-  <div class="comment">
-    <div class="comment-info">
-      <span>{{ comment.commenter }}</span> <p>{{ comment.commented_at }}</p>
-      <hr>
+    {% for comment in comments %}
+    <div class="comment">
+      <div class="comment-info">
+        <span>{{ comment.commenter }}</span>
+        <p>{{ comment.commented_at }}</p>
+        <hr>
+      </div>
+      <span>
+        {{ comment.comment }}
+      </span>
     </div>
-    <span>
-      {{ comment.comment }}
-    </span>
-  </div>
-  {% endfor %}
+    {% endfor %}
   </div>
 </div>
 {% endblock %}

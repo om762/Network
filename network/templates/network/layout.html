@@ -2,86 +2,93 @@
 
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/x-icon" href="{% static 'network/img/network_logo.png' %}">
-    <title>
-      {% block title %}
-        Network
-      {% endblock %}
-    </title>
-    <link href="{% static 'network/styles.css' %}" rel="stylesheet" />
-    <script defer src="https://unpkg.com/feather-icons"></script>
-    {% block head %}{% endblock %}
-  </head>
-  <body>
-    <nav>
-      <div class="navdiv">
-        <!-- Logo -->
-        <div id="logo"><a href="/"><img src="{% static 'network/img/network_logo.png' %}" alt="Network logo" /><span>Network</span></a></div>
 
-        <!-- Menu Button for Small Screens -->
-        <input type="radio" name="slider" id="menu-btn">
-        <input type="radio" name="slider" id="close-btn">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/x-icon" href="{% static 'network/img/network_logo.png' %}">
+  <title>
+    {% block title %}
+    Network
+    {% endblock %}
+  </title>
+  <link href="{% static 'network/styles.css' %}" rel="stylesheet" />
+  <script defer src="https://unpkg.com/feather-icons"></script>
+  {% block head %}{% endblock %}
+</head>
+
+<body>
+  <nav>
+    <div class="navdiv">
+      <!-- Logo -->
+      <div id="logo"><a href="/"><img src="{% static 'network/img/network_logo.png' %}"
+            alt="Network logo" /><span>Network</span></a></div>
+
+      <!-- Menu Button for Small Screens -->
+      <input type="radio" name="slider" id="menu-btn">
+      <input type="radio" name="slider" id="close-btn">
 
 
-        <!-- Navigation Menu -->
-        <ul class="nav-links">
-        
-          <!-- Close button icon -->
-          <label for="close-btn" class="btn close-btn"><i data-feather="x"></i></label>
+      <!-- Navigation Menu -->
+      <ul class="nav-links">
 
-          {% if user.is_authenticated %}
-            <!-- New Post  -->
-            <li><a href="/#new-post-textarea"><i data-feather="pen-tool" id="new-post-link"></i><span>New Post</span></a></li>
-          {% endif %}
-          <li><a href="#"><i data-feather="trending-up"></i><span>All Posts</span></a></li>
-          {% if user.is_authenticated %}
-            <!-- Following -->
-            <li><a href="#"><i data-feather="users"></i><span>Following</span></a></li>
+        <!-- Close button icon -->
+        <label for="close-btn" class="btn close-btn"><i data-feather="x"></i></label>
 
-            <!-- Profile Dropdown-->
-            <li>
-              <a class="desktop" href="#"><i data-feather="user"></i><span><strong>{{ user.username }}</strong></span></a>
-              <input type="checkbox" id="showDrop">
-              <label for="showDrop" class="mobile"><i data-feather="user"></i><span><strong>{{ user.username }}</strong></span></label>
-              <!-- Dropdown Items -->
-              <ul class="drop-menu">
-                <li><a class="nav-link" href="#"><i data-feather="user"></i><span><strong>Profile</strong></span></a></li>
-                <li><a class="nav-link" href="{% url 'logout' %}"><i data-feather="log-out"></i><span><strong>Logout</strong></span></a></li>
-              </ul>
-            </li>
-          {% else %}
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'login' %}">
-                <i data-feather="log-in"></i>
-                <span>Log In</span>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'register' %}">
-                <i data-feather="user-plus"></i>
-                <span>Register</span>
-              </a>
-            </li>
-          {% endif %}
-        </ul>
+        {% if user.is_authenticated %}
+        <!-- New Post  -->
+        <li><a href="/#new-post-textarea"><i data-feather="pen-tool" id="new-post-link"></i><span>New Post</span></a>
+        </li>
+        {% endif %}
+        <li><a href="#"><i data-feather="trending-up"></i><span>All Posts</span></a></li>
+        {% if user.is_authenticated %}
+        <!-- Following -->
+        <li><a href="#"><i data-feather="users"></i><span>Following</span></a></li>
 
-        <!-- Menu Button (visible on smaller screens) -->
-        <label for="menu-btn" class="btn menu-btn"><i data-feather="menu"></i></label>
-      </div>
-    </nav>
+        <!-- Profile Dropdown-->
+        <li>
+          <a class="desktop" href="#"><i data-feather="user"></i><span><strong>{{ user.username }}</strong></span></a>
+          <input type="checkbox" id="showDrop">
+          <label for="showDrop" class="mobile"><i data-feather="user"></i><span><strong>{{ user.username
+                }}</strong></span></label>
+          <!-- Dropdown Items -->
+          <ul class="drop-menu">
+            <li><a class="nav-link" href="#"><i data-feather="user"></i><span><strong>Profile</strong></span></a></li>
+            <li><a class="nav-link" href="{% url 'logout' %}"><i
+                  data-feather="log-out"></i><span><strong>Logout</strong></span></a></li>
+          </ul>
+        </li>
+        {% else %}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'login' %}">
+            <i data-feather="log-in"></i>
+            <span>Log In</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'register' %}">
+            <i data-feather="user-plus"></i>
+            <span>Register</span>
+          </a>
+        </li>
+        {% endif %}
+      </ul>
 
-    <div class="body">
-      {% block body %}
-      {% endblock %}
+      <!-- Menu Button (visible on smaller screens) -->
+      <label for="menu-btn" class="btn menu-btn"><i data-feather="menu"></i></label>
     </div>
+  </nav>
 
-    <!-- Feather icon replacement script -->
-    <script>
-      window.addEventListener('load', function () {
-        feather.replace()
-      })
-    </script>
-  </body>
+  <div class="body">
+    {% block body %}
+    {% endblock %}
+  </div>
+
+  <!-- Feather icon replacement script -->
+  <script>
+    window.addEventListener('load', function () {
+      feather.replace()
+    })
+  </script>
+</body>
+
 </html>

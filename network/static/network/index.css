@@ -4,8 +4,8 @@ body {
 
 
 .pageHeading {
-    text-align: center;
-    margin-top: 40px;
+  text-align: center;
+  margin-top: 40px;
 }
 
 
@@ -143,7 +143,7 @@ hr {
 }
 
 .like-btn-container .like-btn svg {
-  color: rgb(255, 101, 101); 
+  color: rgb(255, 101, 101);
 }
 
 .liked {
@@ -155,11 +155,11 @@ hr {
 }
 
 .comment-btn-container .comment-btn svg {
-  color: rgb(83, 178, 255); 
+  color: rgb(83, 178, 255);
 }
 
 .comment-btn-container .comment-btn svg:hover {
-  color: rgb(0, 140, 255); 
+  color: rgb(0, 140, 255);
 }
 
 .comment-toggle {
@@ -167,21 +167,21 @@ hr {
 }
 
 .comment-box {
-  display: block; 
-  max-height: 0; 
-  opacity: 0; 
+  display: block;
+  max-height: 0;
+  opacity: 0;
   /* padding: 10px; */
   border: 1px solid gray;
   border-radius: 10px;
   /* padding-bottom: 10px; */
   padding: 0 10px;
   overflow: hidden;
-  transition:  all 200ms ease;
+  transition: all 200ms ease;
 }
 
-.comment-toggle:checked ~ .comment-box {
-  max-height: 500px; 
-  opacity: 1; 
+.comment-toggle:checked~.comment-box {
+  max-height: 500px;
+  opacity: 1;
   padding: 10px;
 }
 
@@ -249,11 +249,11 @@ hr {
   border: 1px solid #a0c6ff;
   box-shadow: 0 0 5px rgba(86, 148, 255, 0.5);
   background-color: #E3F2FD;
-  outline:  1px solid #92beff;
+  outline: 1px solid #92beff;
 }
 
 .new-post-text:hover {
-  outline:  2px solid #92beff;
+  outline: 2px solid #92beff;
 }
 
 
@@ -262,7 +262,7 @@ hr {
   justify-content: end;
 }
 
-.new-post-button button{
+.new-post-button button {
   background-color: #2ea44f;
 
   border: 1px solid rgba(27, 31, 35, .15);

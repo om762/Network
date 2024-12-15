@@ -40,12 +40,14 @@ h1 {
 }
 
 label {
-  display: block;
-  font-weight: 500;
-  margin-bottom: 0px;
+    display: block;
+    font-weight: 500;
+    margin-bottom: 0px;
 }
 
-input[type="text"], input[type="password"], input[type="email"] {
+input[type="text"],
+input[type="password"],
+input[type="email"] {
     font-family: monospace;
     width: 100%;
     font-size: medium;
@@ -56,7 +58,7 @@ input[type="text"], input[type="password"], input[type="email"] {
     border: 2px dotted #CFD8DC;
     box-sizing: border-box;
     transition: padding-left 0.4s;
-    
+
 }
 
 input[type="text"]:focus-visible,
@@ -96,9 +98,9 @@ input[type="email"]:focus-visible {
 }
 
 .side-link-div {
-  margin-top: 15px;
-  color: rgb(65 65 65);
-  font-weight: 500;
+    margin-top: 15px;
+    color: rgb(65 65 65);
+    font-weight: 500;
 }
 
 /* Links */
