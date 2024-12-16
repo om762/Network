@@ -12,6 +12,22 @@ def generate_random_color():
     ])
 class User(AbstractUser):
     color = models.CharField(max_length=7, default=generate_random_color)
+    following = models.ManyToManyField("network.User", verbose_name=_("Following"), related_name="follower")
+    
+    def toggle_follow(self, user):
+        if self.following.filter(id=user.id).exists():
+            self.following.remove(user)
+        else:
+            self.following.add(user)
+
+    def count_following(self):
+        return self.following.count()
+    
+    def count_follower(self):
+        return self.follower.count()
+    
+    def is_following(self, user):
+        return self.following.filter(id=user.id).exists()
 
 
 class Post(models.Model):

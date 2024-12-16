@@ -1,7 +1,7 @@
 {% extends "network/layout.html" %}
 {% load static %}
 
-{% block title %}Post Details{% endblock %}
+{% block title %}Comment - {{ post.content }}{% endblock %}
 
 {% block head %}
 <link rel="stylesheet" href="{% static 'network/comments.css' %}">

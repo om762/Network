@@ -88,7 +88,7 @@ def posts(request):
     try:
         posts = paginator.page(page)
     except:
-        return JsonResponse({'message':'Invalid Page Number'}, status=400)
+        return JsonResponse({'message':'Invalid Page Number'}, status=400,  safe=False)
     
     post_data = []
     for post in posts:
@@ -98,6 +98,7 @@ def posts(request):
             'poster': {
                 'id': post.poster.id,
                 'username': post.poster.username,
+                'is_following': request.user.is_following(post.poster) if request.user.is_authenticated else False,
                 'color': post.poster.color
             },
             'posting_date': post.post_at,
@@ -115,29 +116,36 @@ def posts(request):
     }
     return JsonResponse({
         'page_data':page_data,
-        'posts':post_data
+        'posts':post_data,
+        'user': {
+            'id': request.user.id if request.user.is_authenticated else 0,
+            'username': request.user.username if request.user.is_authenticated else '',
+        }
         }, safe=False)
 
 
 
-login_required(login_url='/login')
+
 def like_post(request):
-    post_id = request.GET.get('post_id')
+    if not request.user.is_authenticated:
+        return JsonResponse({"error": "User not logged in"}, status=401, safe=False)
+    
+    post_id = int(request.GET.get('post_id'))
     try:
         post = Post.objects.get(id=post_id)
     except Post.DoesNotExist:
-        return HttpResponse('Bad Request, Post id don\'t exist' , status=400)
+        return JsonResponse({"error": 'Bad Request, Post id don\'t exist'} , status=400, safe=False)
     
     post.toggle_like(request.user)
     
     return JsonResponse({
         'likes': post.likes(),
         'is_liked': post.is_liked_by(request.user)
-        }) 
+        }, status=200) 
 
 def view_comments(request, post_id):
     if not Post.objects.filter(id=post_id).exists():
-        return HttpResponse(f"There is such Post with id: {post_id}")
+        return JsonResponse({"error": f"There is such Post with id: {post_id}"}, status=400, safe=False)
     
     post = Post.objects.get(id=post_id)
     comments = Comment.objects.filter(comment_on=post).order_by('-commented_at')
@@ -156,3 +164,18 @@ def comment(request):
         comment_text = data.get("commentText")
         Comment.objects.create(comment_on=post, commenter=request.user, comment=comment_text).save()
         return HttpResponseRedirect(f"/comments/{post_id}")
+
+def toggle_follow(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({"error": "User not logged in"},status=401, safe=False)
+    try:
+        user_id = int(request.GET.get('user_id'))
+        user = User.objects.get(id=user_id)
+    except:
+        return JsonResponse({"error":'Bad Request, User id don\'t exist'} , status=400, safe=False)
+    
+    if request.user == user:
+        return JsonResponse({"error":"You cannot follow/unfollow yourself."}, status=400, safe=False)
+
+    user.toggle_follow(user)
+    return JsonResponse({"status":'success'}, status=200, safe=False)
