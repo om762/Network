@@ -47,7 +47,7 @@ Following - Network
 {% endif %}
 
 
-<h1 class="pageHeading"><i data-feather="trending-up"></i><span></span>Following</h1>
+<h1 class="pageHeading"><i data-feather="users"></i><span></span>Following</h1>
 
 <!-- Posts React App -->
 <div id="App"></div>
@@ -80,19 +80,15 @@ Following - Network
         if (!response.ok) {
           if (response.status === 401) {
             window.location.href = '/login';
-            return false
+            return
           } else {
             return response.json().then(data => {
               throw new Error(data.error || 'Error occurred')
-              return false
+              return
             })
           }
         }
-        return true
-      })
-      .then(isSuccess => {
-        if (isSuccess)
-          setIsFollowing(!isFollowing)
+        setIsFollowing(!isFollowing)
       })
       .catch(error => {
         console.error("Error:", error.message);
@@ -152,7 +148,7 @@ Following - Network
           </div>
           <div className="user-info">
             <div>
-              <span><a href={`/user/${postData.poster.id}/profile`}>{postData.poster.username}</a></span>
+              <span><a href={`/profile/${postData.poster.username}`}>{postData.poster.username}</a></span>
               <span>&middot;</span>
               <span><a className="follow-link" onClick={follow} >{followingText}</a></span>
             </div>
@@ -239,11 +235,14 @@ Following - Network
 
     // Function for loading Post data and Page data then setting them in state
     function loadPostData(pageNumber = 1) {
-
       setLoading(true)
-      fetch(`/posts?page=${pageNumber}`)
+      fetch(`/following_posts?page=${pageNumber}`)
         .then(response => {
           if (!response.ok) {
+            if (response.status === 401) {
+              window.location.href = '/login';
+              return;
+            }
             throw new Error('Failed to fetch posts');
           }
           return response.json();
@@ -253,7 +252,6 @@ Following - Network
           setPageData(data.page_data)
           setUser({ id: data.user.id, username: data.user.username });
           setLoading(false)
-          
         })
     }
 
@@ -277,7 +275,7 @@ Following - Network
 
     if (postList.length === 0) {
       return (
-        <div>There are no Post. <a href="/#new-post-textarea">Post Something.</a></div>
+        <div>No posts have been posted by people you follow.<a href="/#new-post-textarea">Post Something.</a></div>
       )
     }
 

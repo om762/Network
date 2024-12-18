@@ -18,7 +18,7 @@ nav .navdiv {
   position: relative;
   max-width: 1300px;
   padding: 0px 30px;
-  height: 70px;
+  height: 65px;
   /* line-height: 70px; */
   margin: auto;
   display: flex;
@@ -112,7 +112,7 @@ svg {
 
 .nav-links li:hover .drop-menu {
   transition: all 0.3s ease;
-  top: 70px;
+  top: 55px;
   opacity: 1;
   visibility: visible;
 }
@@ -160,7 +160,6 @@ svg {
   }
 
 
-  /* custom scroll bar */
   ::-webkit-scrollbar {
     width: 0px;
   }
@@ -233,14 +232,11 @@ svg {
   }
 }
 
-::-webkit-scrollbar {
-  width: 0px;
-}
 
 /* Body */
 
 .body {
-  padding-top: 100px;
+  padding-top: 90px;
   max-width: 800px;
   margin: auto;
 

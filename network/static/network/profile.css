@@ -1,0 +1,165 @@
+.profile-header {
+  text-align: center;
+  padding: 10px 0;
+  margin-bottom: 40px;
+  background-color:#0056b3;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  color: white;
+  border-radius: 20px;
+}
+
+.profile-header .profile-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  flex-wrap: wrap;
+}
+
+.profile-header .id-letter {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 50px;
+}
+
+.profile-header .id-letter .id {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #0000006b;
+}
+
+.profile-header .profile-avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background-color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+.profile-header .avatar-text {
+  font-size: 6rem;
+  color: #000000;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.profile-header .profile-details {
+  max-width: 600px;
+  text-align: left;
+  padding-left: 30px;
+}
+
+.profile-header .profile-details h2 {
+  font-size: 3rem;
+  font-weight: 600;
+  margin: 0 0 10px;
+}
+
+.profile-header .profile-details p {
+  font-size: 1.2rem;
+  margin: 5px 0;
+  color: #7a7a7a;
+}
+
+.profile-header .profile-details .email {
+  color: #ffffff9c;
+}
+
+.profile-header .profile-details .stats {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-start;
+  gap: 40px;
+  font-size: 1.2rem;
+}
+
+.profile-header .profile-details .stats span {
+  font-weight: 500;
+  color: #fff;
+}
+
+.profile-header button.btn {
+  padding: 8px 50px;
+  font-size: 1.1rem;
+  border: none;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.profile-header .toggle-follow {
+  --bg: #c4c4c4;
+  --hover-bg: #0099ff; 
+  --hover-text: #ffffff; 
+  color: #000000;
+  cursor: pointer;
+  font-weight: 600;
+  border: 1px solid var(--bg);
+  border-radius: 50px;
+  padding: 0.8em 2em;
+  background: var(--bg);
+  transition: 0.2s;
+}
+
+.profile-header .toggle-follow:hover {
+  color: var(--hover-text);
+  transform: translate(-0.25rem, -0.25rem);
+  background: var(--hover-bg);
+  box-shadow: 0.25rem 0.25rem var(--bg);
+}
+
+.profile-header .toggle-follow:active {
+  transform: translate(0);
+  box-shadow: none;
+}
+
+.profile-header .unfollow-btn {
+  --hover-bg: #ff5e00; 
+}
+
+
+.profile-posts {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #fff;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 15px;
+}
+
+.profile-posts h3 {
+  font-size: 2.2rem;
+  margin-bottom: 20px;
+  color: #007bff;
+}
+
+@media (max-width: 768px) {
+  .profile-header .profile-container {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .profile-header .profile-avatar {
+    margin-bottom: 20px;
+  }
+
+  .profile-header .profile-details h2 {
+    font-size: 2.2rem;
+  }
+
+  .profile-header .profile-details p {
+    font-size: 1rem;
+  }
+
+  .profile-header .profile-details .stats {
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+}

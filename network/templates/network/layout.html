@@ -39,10 +39,10 @@
         <li><a href="/#new-post-textarea"><i data-feather="pen-tool" id="new-post-link"></i><span>New Post</span></a>
         </li>
         {% endif %}
-        <li><a href="#"><i data-feather="trending-up"></i><span>All Posts</span></a></li>
+        <li><a href="/"><i data-feather="trending-up"></i><span>All Posts</span></a></li>
         {% if user.is_authenticated %}
         <!-- Following -->
-        <li><a href="#"><i data-feather="users"></i><span>Following</span></a></li>
+        <li><a href="/followings"><i data-feather="users"></i><span>Following</span></a></li>
 
         <!-- Profile Dropdown-->
         <li>
@@ -51,7 +51,7 @@
           <label for="showDrop" class="mobile"><i data-feather="user"></i><span><strong>{{ user.username }}</strong></span></label>
           <!-- Dropdown Items -->
           <ul class="drop-menu">
-            <li><a class="nav-link" href="#"><i data-feather="user"></i><span><strong>Profile</strong></span></a></li>
+            <li><a class="nav-link" href="/profile/{{ user.username }}"><i data-feather="user"></i><span><strong>Profile</strong></span></a></li>
             <li><a class="nav-link" href="{% url 'logout' %}"><i
                   data-feather="log-out"></i><span><strong>Logout</strong></span></a></li>
           </ul>

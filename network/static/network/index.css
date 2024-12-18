@@ -24,7 +24,7 @@ a:hover {
   max-width: 700px;
   margin: auto;
   margin-bottom: 35px;
-  /* user-select: none; */
+  user-select: none;
   padding: 10px;
   padding-bottom: 5px;
   box-shadow: rgb(0 0 0 / 35%) 7px 7px 16px 0px;
@@ -88,13 +88,100 @@ a:hover {
 }
 
 
+
 .post-content-div {
   border: 1px solid rgb(157, 157, 157);
-  padding: 10px;
-  font-weight: 600;
+  padding: 5px;
   border-radius: 10px;
   user-select: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.content {
+  width: 100%;
   font-family: cursive;
+}
+
+.content-bnt-div {
+  display: flex;
+  gap: 10px;
+  justify-content: right;
+}
+
+.content-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: none;
+  background-color: wheat;
+  color:black;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition-duration: 0.3s;
+  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.164);
+  transition-duration: 0.3s;
+  overflow: hidden;
+}
+
+.content-btn svg {
+  width: 17px;
+  transition-duration: 0.3s;
+}
+
+.content-btn:hover {
+  width: 100px;
+  border-radius: 50px;
+  transition-duration: 0.3s;
+  align-items: center;
+}
+
+.content-btn:hover svg {
+  transition-duration: 0.3s;
+  transform: translateY(60%);
+  transform: rotate(360deg);
+}
+
+.content-btn::before {
+  display: none;
+  transition-duration: 0.3s;
+  font-size: 2px;
+}
+
+.content-btn:hover::before {
+  display: block;
+  padding-right: 10px;
+  font-size: 13px;
+  opacity: 1;
+  transform: translateY(0px);
+  transition-duration: 0.3s;
+}
+
+.edit-btn:hover {
+  background-color: #f4a0ff;
+}
+
+.edit-btn::before {
+  content: "Edit";
+}
+
+.save-btn:hover {
+  background-color: #a0ffa5;
+}
+
+.save-btn::before {
+  content: "Save";
+}
+
+.cancel-btn:hover {
+  background-color: #ffa0a0;
+}
+
+.cancel-btn::before {
+  content: "Cancel";
 }
 
 .reaction-data {
@@ -243,16 +330,32 @@ hr {
 .new-post-text {
   font-family: monospace;
   font-family: cursive;
+  font-size: 15px;
   width: 100%;
-  resize: none;
-  font-size: 14px;
+  resize: vertical;
   height: 70px;
-  padding: 9px 20px;
+  padding: 9px 9px;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
   border-radius: 7px;
   border: 1px solid #c4c4c4;
   box-sizing: border-box;
-  transition: padding-left 0.4s;
+}
+
+.new-post-text::-webkit-scrollbar {
+  width: 10px;
+}
+
+.new-post-text::-webkit-scrollbar-track {
+  background: #a8dbff;
+}
+
+.new-post-text::-webkit-scrollbar-thumb {
+  background: #7dc9ff;
+  border-radius: 50px;
+}
+
+.new-post-text::-webkit-scrollbar-thumb:hover {
+  background: #2ca7ff; /* Color when hovered */
 }
 
 .new-post-text:focus-visible {

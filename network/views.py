@@ -76,14 +76,23 @@ def new_post(request):
     return HttpResponseRedirect('/')
 
 
-def posts(request):
+
+# Post API with Parameters
+def posts(request, followed_posts=False):
     page = int(request.GET.get('page') or 1)
+    profile_username = request.GET.get('profile_user')
     
-    
-    all_posts = Post.objects.all().order_by('-post_at')
-    for p in all_posts:
-        print(p.post_at)
-    
+    if followed_posts:
+        user = request.user
+        followed_users = user.following.all()
+        all_posts = Post.objects.filter(poster__in=followed_users).order_by('-post_at')
+    elif profile_username:
+        profile_user = User.objects.get(username=profile_username)
+        all_posts = Post.objects.filter(poster=profile_user).order_by('-post_at')
+    else:
+        all_posts = Post.objects.all().order_by('-post_at')
+
+
     paginator = Paginator(all_posts, 10)
     try:
         posts = paginator.page(page)
@@ -123,7 +132,15 @@ def posts(request):
         }
         }, safe=False)
 
+def following_posts(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({"error": "User not logged in"},status=401, safe=False)
+    return posts(request, True)
 
+
+@login_required(login_url='/login')
+def following_view(request):
+    return render(request, "network/following.html")
 
 
 def like_post(request):
@@ -177,5 +194,41 @@ def toggle_follow(request):
     if request.user == user:
         return JsonResponse({"error":"You cannot follow/unfollow yourself."}, status=400, safe=False)
 
-    user.toggle_follow(user)
-    return JsonResponse({"status":'success'}, status=200, safe=False)
+    request.user.toggle_follow(user)
+    return JsonResponse({"followers":user.count_follower()}, safe=False)
+
+def profile_view(request, username):
+    try:
+        profile_user = User.objects.get(username=username)
+    except User.DoesNotExist:
+        return HttpResponse(f"User not found with username <b>{username}</b>")
+    
+    posts = Post.objects.filter(poster=profile_user)
+    
+    return render(request, "network/profile.html", {""
+        "profile_user":profile_user,
+        "posts":posts,
+        "count_follower": profile_user.count_follower(),
+        "count_following": profile_user.count_following(),
+        "is_following": profile_user.is_following(request.user) if request.user.is_authenticated else False
+    })
+
+@csrf_exempt
+def edit_post(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            post_id = int(data.get('post_id'))
+            post = Post.objects.get(id=post_id)
+            edited_content = data.get('edited_content')
+        except:
+            return JsonResponse({"error":'Bad Request'} , status=400, safe=False)
+        
+        if post.poster != request.user:
+            return JsonResponse({"error":'Only poster can edit his own posts'} , status=400, safe=False)
+        
+        post.content = edited_content
+        post.save()
+
+        return JsonResponse({"content":post.content}, safe=False)
+

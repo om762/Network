@@ -2,9 +2,11 @@
 {% load static %}
 
 {% block title %}
-All Posts - Network
+{{ profile_user.username }} - Network
 {% endblock title %}
+
 {% block head %}
+<link rel="stylesheet" href="{% static 'network/profile.css' %}">
 <link rel="stylesheet" href="{% static 'network/index.css' %}">
 <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
@@ -12,42 +14,69 @@ All Posts - Network
 {% endblock head %}
 
 {% block body %}
-
-{% if user.is_authenticated %}
-<div class="post-container">
-  <div class="profile-info">
-    <div class="profile-letter" style="background-color: rgb(0, 0, 0);">
-      <span>{{ user.username|slice:":1" }}</span>
+<div class="profile-header">
+    <div class="profile-container">
+        <div class="profile-avatar">
+            <span class="avatar-text">{{ profile_user.username|slice:":1"|upper }}</span>
+        </div>
+        <div class="profile-details">
+            <h2>{{ profile_user.username }}</h2>
+            <p class="email">{{ profile_user.email }}</p>
+            <p class="name">{{ profile_user.first_name }} {{ profile_user.last_name }}</p>
+            <div class="stats">
+                <span id="followers_count"><strong>{{ count_follower }}</strong> Followers</span>
+                <span><strong>{{ count_following }}</strong> Following</span>
+            </div>
+            {% if request.user.is_authenticated and request.user != profile_user %}
+                {% if is_following %}
+                    <button type="button" onclick="follow()" id="follow-btn" class="btn toggle-follow unfollow-btn">Unfollow</button>
+                {% else %}
+                    <button type="button" onclick="follow()" id="follow-btn" class="btn toggle-follow">Follow</button>
+                {% endif %}
+            {% endif %}
+        </div>
     </div>
-    <div class="user-info">
-      <div>
-        <span><a href="user-profile-url">{{ user.username }}</a></span>
-      </div>
-    </div>
-  </div>
-  <form action="{% url 'new_post' %}" method="post">
-    {% csrf_token %}
-    <textarea class="new-post-text" name="content" id="new-post-textarea" placeholder="Write new Post"
-      required></textarea>
-    <div class="new-post-button">
-      <button type="submit" id="post-submit-button" style="display: none;">Post</button>
-    </div>
-  </form>
 </div>
-<script>
-  const postTextArea = document.getElementById('new-post-textarea');
-  const postButton = document.getElementById('post-submit-button');
+		<script>
+			const profileColor = '{{ profile_user.color }}'
+			document.getElementsByClassName('profile-header')[0].style.backgroundColor = profileColor
+		
+		function follow() {
+				const followBtn = document.getElementById('follow-btn');
+				const userId = "{{ profile_user.id }}";
+		
+				fetch(`/toggle_follow?user_id=${userId}`)
+						.then(response => {
+								if (!response.ok) {
+										if (response.status === 401) {
+												window.location.href = '/login';
+												return false;
+										} else {
+												return response.json().then(data => {
+														throw new Error(data.error || 'Error occurred');
+												});
+										}
+								}
+								return response.json();
+						})
+						.then(data => {
+								document.getElementById('followers_count').innerHTML = `<strong>${data.followers}</strong> Followers`;
+								
+								if (followBtn.innerHTML.trim() === 'Follow') {
+										followBtn.innerHTML = 'Unfollow';
+										followBtn.className = 'btn toggle-follow unfollow-btn';
+								} else {
+										followBtn.innerHTML = 'Follow';
+										followBtn.className = 'btn toggle-follow';
+								}
+						})
+						.catch(error => {
+								console.error("Error:", error.message);
+						});
+		}
+		</script>
 
-  postButton.style.display = postTextArea.value.trim() ? 'inline-block' : 'none';
-
-  postTextArea.addEventListener('input', () => {
-    postButton.style.display = postTextArea.value.trim() ? 'inline-block' : 'none';
-  });
-</script>
-{% endif %}
-
-
-<h1 class="pageHeading"><i data-feather="trending-up"></i><span></span>All Posts</h1>
+<h1 class="pageHeading"><i data-feather="user"></i><span></span>Posts by {{ profile_user.username }}</h1>
 
 <!-- Posts React App -->
 <div id="App"></div>
@@ -55,7 +84,7 @@ All Posts - Network
 <script type="text/babel">
 
 
-  // A post Component 
+  // A post Component: Each post with functionality to like, comment, follow the poster and editing of Post
   function Post({ postData, user }) {
 
     const [likes, setLikes] = React.useState(postData.likes)
@@ -63,34 +92,33 @@ All Posts - Network
     const [comments, setComments] = React.useState(postData.comments)
     const [content, setContent] = React.useState(postData.content)
     const [commentText, setCommentText] = React.useState("")
-    const [isFollowing, setIsFollowing] = React.useState(postData.poster.is_following)
     const [isEditing, setIsEditing] = React.useState(false)
     const [editedContent, setEditedContent] = React.useState(content)
 
+    // Each user has a random color
     const profileLetterStyle = {
       backgroundColor: postData.poster.color || '#3498DB'
     };
     const heartColor = isLiked ? "red" : "none"
     const likeText = isLiked ? "Liked" : "Like"
-    const followingText = isFollowing
-      ? "Unfollow"
-      : (user.username == postData.poster.username ? "" : "Follow");
 
 
-    function editPost() {
+    // Post editing 
+
+    function editPost() {   // For switching between modes
       setIsEditing(true)
     }
 
-    function cancelEdit() {
+    function cancelEdit() {   // When Editing of a post is cancel, reset content
       setIsEditing(false)
       setEditedContent(content);
     }
 
-    function handleEditContentChange(event) {
+    function handleEditContentChange(event) {   // To handle the change in edited content while editing
       setEditedContent(event.target.value);
     }
 
-    function saveEdit() {
+    function saveEdit() {           // To save the edit changes by a request to backend
       if (editedContent.trim()) {
         fetch(`/edit-post/`, {
           method: 'POST',
@@ -114,26 +142,6 @@ All Posts - Network
       }
     }
 
-    function follow() {
-      fetch(`/toggle_follow?user_id=${postData.poster.id}`)
-        .then(response => {
-          if (!response.ok) {
-            if (response.status === 401) {
-              window.location.href = '/login';
-              return false
-            } else {
-              return response.json().then(data => {
-                throw new Error(data.error || 'Error occurred')
-                return false
-              })
-            }
-          }
-          setIsFollowing(!isFollowing)
-        })
-        .catch(error => {
-          console.error("Error:", error.message);
-        });
-    }
 
 
     function submitComment() {
@@ -145,13 +153,13 @@ All Posts - Network
             commentText: commentText
           })
         })
-          .then(response => {
-            if (response.redirected) {
-              setComments(comments + 1)
-              setCommentText("")
-              window.open(response.url)
-            }
-          })
+        .then(response => {
+          if (response.redirected) {
+            setComments(comments + 1)
+            setCommentText("")
+            window.open(response.url)
+          }
+        })
       }
     }
 
@@ -188,9 +196,7 @@ All Posts - Network
           </div>
           <div className="user-info">
             <div>
-              <span><a href={`/profile/${postData.poster.username}`}>{postData.poster.username}</a></span>
-              {followingText ? (<span>&middot;</span>) : (<></>)}
-              <span><a className="follow-link" onClick={follow} >{followingText}</a></span>
+							<span><a href={`/profile/${postData.poster.username}`}>{postData.poster.username}</a></span>
             </div>
             <div className="profile-time-div">
               <span>{new Date(postData.update_at).toLocaleString()}</span>
@@ -263,9 +269,9 @@ All Posts - Network
           </div>
           <div className="comment-btn-container">
             <label className="comment-btn" htmlFor={`comment-toggle-${postData.id}`}>
-              <div>
+            <div>
                 <i data-feather="message-square"></i><span>Comment</span>
-              </div>
+                </div>
             </label>
           </div>
         </div>
@@ -317,8 +323,9 @@ All Posts - Network
     // Function for loading Post data and Page data then setting them in state
     function loadPostData(pageNumber = 1) {
 
+      const profile_user = '{{ profile_user.username }}'
       setLoading(true)
-      fetch(`/posts?page=${pageNumber}`)
+      fetch(`/posts?profile_user=${profile_user}&page=${pageNumber}`)
         .then(response => {
           if (!response.ok) {
             throw new Error('Failed to fetch posts');
@@ -330,7 +337,6 @@ All Posts - Network
           setPageData(data.page_data)
           setUser({ id: data.user.id, username: data.user.username });
           setLoading(false)
-
         })
     }
 

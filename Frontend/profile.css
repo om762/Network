@@ -1,0 +1,68 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f9;
+  display: flex;
+  justify-content: center;
+  height: 100vh;
+  margin: 0;
+}
+
+.wrapper {
+  position: absolute;
+  top: 100px;
+}
+
+.profile-card {
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.profile-avatar {
+  width: 100px;
+  height: 100px;
+  background-color: #47b364;
+  color: rgb(255, 255, 255);
+  font-size: 60px;
+  font-weight: bold;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.profile-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-username {
+  font-size: 20px;
+  font-weight: bold;
+  margin: 0;
+  color: #333;
+}
+
+.profile-email {
+  font-size: 16px;
+  color: #555;
+  margin: 5px 0 0;
+}
+
+.profile-card .profile-avatar[data-color="green"] {
+  background-color: #28a745;
+}
+
+.profile-card .profile-avatar[data-color="red"] {
+  background-color: #dc3545;
+}
+
+.profile-card .profile-avatar[data-color="blue"] {
+  background-color: #007bff;
+}
