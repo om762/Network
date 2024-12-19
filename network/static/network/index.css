@@ -5,7 +5,7 @@ body {
 a {
   text-decoration: none;
   color: #007BFF;
-  font-weight: bold; 
+  font-weight: bold;
   transition: color 0.3s ease;
 }
 
@@ -115,7 +115,7 @@ a:hover {
   border-radius: 50%;
   border: none;
   background-color: wheat;
-  color:black;
+  color: black;
   font-weight: 600;
   display: flex;
   align-items: center;
@@ -355,7 +355,8 @@ hr {
 }
 
 .new-post-text::-webkit-scrollbar-thumb:hover {
-  background: #2ca7ff; /* Color when hovered */
+  background: #2ca7ff;
+  /* Color when hovered */
 }
 
 .new-post-text:focus-visible {

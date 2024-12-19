@@ -1,192 +1,228 @@
 {% extends "network/layout.html" %}
 {% load static %}
 
-{% block title %}
-{{ profile_user.username }} - Network
-{% endblock title %}
+{% block title %} {{ profile_user.username }} - Network {% endblock title %}
 
 {% block head %}
-<link rel="stylesheet" href="{% static 'network/profile.css' %}">
-<link rel="stylesheet" href="{% static 'network/index.css' %}">
+<link rel="stylesheet" href="{% static 'network/profile.css' %}" />
+<link rel="stylesheet" href="{% static 'network/index.css' %}" />
 <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 {% endblock head %}
 
 {% block body %}
-<div class="profile-header">
-    <div class="profile-container">
-        <div class="profile-avatar">
-            <span class="avatar-text">{{ profile_user.username|slice:":1"|upper }}</span>
-        </div>
-        <div class="profile-details">
-            <h2>{{ profile_user.username }}</h2>
-            <p class="email">{{ profile_user.email }}</p>
-            <p class="name">{{ profile_user.first_name }} {{ profile_user.last_name }}</p>
-            <div class="stats">
-                <span id="followers_count"><strong>{{ count_follower }}</strong> Followers</span>
-                <span><strong>{{ count_following }}</strong> Following</span>
-            </div>
-            {% if request.user.is_authenticated and request.user != profile_user %}
-                {% if is_following %}
-                    <button type="button" onclick="follow()" id="follow-btn" class="btn toggle-follow unfollow-btn">Unfollow</button>
-                {% else %}
-                    <button type="button" onclick="follow()" id="follow-btn" class="btn toggle-follow">Follow</button>
-                {% endif %}
-            {% endif %}
-        </div>
-    </div>
-</div>
-		<script>
-			const profileColor = '{{ profile_user.color }}'
-			document.getElementsByClassName('profile-header')[0].style.backgroundColor = profileColor
-		
-		function follow() {
-				const followBtn = document.getElementById('follow-btn');
-				const userId = "{{ profile_user.id }}";
-		
-				fetch(`/toggle_follow?user_id=${userId}`)
-						.then(response => {
-								if (!response.ok) {
-										if (response.status === 401) {
-												window.location.href = '/login';
-												return false;
-										} else {
-												return response.json().then(data => {
-														throw new Error(data.error || 'Error occurred');
-												});
-										}
-								}
-								return response.json();
-						})
-						.then(data => {
-								document.getElementById('followers_count').innerHTML = `<strong>${data.followers}</strong> Followers`;
-								
-								if (followBtn.innerHTML.trim() === 'Follow') {
-										followBtn.innerHTML = 'Unfollow';
-										followBtn.className = 'btn toggle-follow unfollow-btn';
-								} else {
-										followBtn.innerHTML = 'Follow';
-										followBtn.className = 'btn toggle-follow';
-								}
-						})
-						.catch(error => {
-								console.error("Error:", error.message);
-						});
-		}
-		</script>
 
-<h1 class="pageHeading"><i data-feather="user"></i><span></span>Posts by {{ profile_user.username }}</h1>
+{% if request.user.is_authenticated %}
+  <script>
+    const csrfToken = "{{ csrf_token }}"
+  </script>
+{% endif %}
+
+
+<div class="profile-header">
+  <div class="profile-container">
+    <div class="profile-avatar">
+      <span class="avatar-text">{{ profile_user.username|slice:":1"|upper }}</span>
+    </div>
+    <div class="profile-details">
+      <h2>{{ profile_user.username }}</h2>
+      <p class="email">{{ profile_user.email }}</p>
+      <p class="name">
+        {{ profile_user.first_name }} {{ profile_user.last_name }}
+      </p>
+      <div class="stats">
+        <span id="followers_count"><strong>{{ count_follower }}</strong> Followers</span>
+        <span><strong>{{ count_following }}</strong> Following</span>
+      </div>
+      {% if request.user.is_authenticated and request.user != profile_user %}
+      {% if is_following %}
+      <button type="button" onclick="follow()" id="follow-btn" class="btn toggle-follow unfollow-btn">
+        Unfollow
+      </button>
+      {% else %}
+      <button type="button" onclick="follow()" id="follow-btn" class="btn toggle-follow">Follow</button>
+      {% endif %}
+      {% endif %}
+    </div>
+  </div>
+</div>
+<script>
+  const profileColor = "{{ profile_user.color }}";
+  document.getElementsByClassName("profile-header")[0].style.backgroundColor =
+    profileColor;
+
+  function follow() {
+    const followBtn = document.getElementById("follow-btn");
+    const userId = "{{ profile_user.id }}";
+
+    fetch(`/toggle_follow/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": csrfToken,
+      },
+      body: JSON.stringify({
+        user_id: postData.poster.id,
+      }),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          if (response.status === 401) {
+            window.location.href = "/login";
+            return false;
+          } else {
+            return response.json().then((data) => {
+              throw new Error(data.error || "Error occurred");
+            });
+          }
+        }
+        return response.json();
+      })
+      .then((data) => {
+        document.getElementById(
+          "followers_count"
+        ).innerHTML = `<strong>${data.followers}</strong> Followers`;
+
+        if (followBtn.innerHTML.trim() === "Follow") {
+          followBtn.innerHTML = "Unfollow";
+          followBtn.className = "btn toggle-follow unfollow-btn";
+        } else {
+          followBtn.innerHTML = "Follow";
+          followBtn.className = "btn toggle-follow";
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error.message);
+      });
+  }
+</script>
+
+<h1 class="pageHeading">
+  <i data-feather="user"></i><span></span>Posts by {{ profile_user.username }}
+</h1>
 
 <!-- Posts React App -->
 <div id="App"></div>
 
 <script type="text/babel">
-
-
   // A post Component: Each post with functionality to like, comment, follow the poster and editing of Post
   function Post({ postData, user }) {
-
-    const [likes, setLikes] = React.useState(postData.likes)
-    const [isLiked, setIsLiked] = React.useState(postData.is_liked)
-    const [comments, setComments] = React.useState(postData.comments)
-    const [content, setContent] = React.useState(postData.content)
-    const [commentText, setCommentText] = React.useState("")
-    const [isEditing, setIsEditing] = React.useState(false)
-    const [editedContent, setEditedContent] = React.useState(content)
+    const [likes, setLikes] = React.useState(postData.likes);
+    const [isLiked, setIsLiked] = React.useState(postData.is_liked);
+    const [comments, setComments] = React.useState(postData.comments);
+    const [content, setContent] = React.useState(postData.content);
+    const [commentText, setCommentText] = React.useState("");
+    const [isEditing, setIsEditing] = React.useState(false);
+    const [editedContent, setEditedContent] = React.useState(content);
 
     // Each user has a random color
     const profileLetterStyle = {
-      backgroundColor: postData.poster.color || '#3498DB'
+      backgroundColor: postData.poster.color || "#3498DB",
     };
-    const heartColor = isLiked ? "red" : "none"
-    const likeText = isLiked ? "Liked" : "Like"
+    const heartColor = isLiked ? "red" : "none";
+    const likeText = isLiked ? "Liked" : "Like";
 
+    // Post editing
 
-    // Post editing 
-
-    function editPost() {   // For switching between modes
-      setIsEditing(true)
+    function editPost() {
+      // For switching between modes
+      setIsEditing(true);
     }
 
-    function cancelEdit() {   // When Editing of a post is cancel, reset content
-      setIsEditing(false)
+    function cancelEdit() {
+      // When Editing of a post is cancel, reset content
+      setIsEditing(false);
       setEditedContent(content);
     }
 
-    function handleEditContentChange(event) {   // To handle the change in edited content while editing
+    function handleEditContentChange(event) {
+      // To handle the change in edited content while editing
       setEditedContent(event.target.value);
     }
 
-    function saveEdit() {           // To save the edit changes by a request to backend
+    function saveEdit() {
+      // To save the edit changes by a request to backend
       if (editedContent.trim()) {
         fetch(`/edit-post/`, {
-          method: 'POST',
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrfToken,
+          },
           body: JSON.stringify({
             post_id: postData.id,
-            edited_content: editedContent
-          })
+            edited_content: editedContent,
+          }),
         })
-          .then(response => {
-          if (!response.ok) {
-            throw new Error('Failed to fetch posts');
-          }
-          return response.json()
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("Failed to fetch posts");
+            }
+            return response.json();
           })
 
-          .then(data => {
-            setContent(data.content)
-            setIsEditing(false)
-            setEditedContent(data.content)
-          })
+          .then((data) => {
+            setContent(data.content);
+            setIsEditing(false);
+            setEditedContent(data.content);
+          });
       }
     }
-
-
 
     function submitComment() {
       if (commentText.trim()) {
         fetch(`/comment/`, {
-          method: 'POST',
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrfToken,
+          },
           body: JSON.stringify({
             post_id: postData.id,
-            commentText: commentText
-          })
-        })
-        .then(response => {
+            commentText: commentText,
+          }),
+        }).then((response) => {
           if (response.redirected) {
-            setComments(comments + 1)
-            setCommentText("")
-            window.open(response.url)
+            setComments(comments + 1);
+            setCommentText("");
+            window.open(response.url);
           }
-        })
+        });
       }
     }
 
     function updateCommentText(event) {
-      setCommentText(event.target.value)
+      setCommentText(event.target.value);
     }
 
     function likePost() {
-      fetch(`/like-post?post_id=${postData.id}`)
-
-        .then(response => {
+      fetch(`/like-post/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": csrfToken,
+        },
+        body: JSON.stringify({
+          post_id: postData.id,
+        }),
+      })
+        .then((response) => {
           if (!response.ok) {
             if (response.status === 401) {
-              window.location.href = '/login';
-              return postData
+              window.location.href = "/login";
+              return postData;
             } else {
-              throw new Error('Failed to fetch posts');
+              throw new Error("Failed to fetch posts");
             }
           }
           return response.json();
         })
-        .then(data => {
+        .then((data) => {
           setLikes(data.likes);
           setIsLiked(data.is_liked);
         });
     }
-
 
     return (
       <div className="post-container">
@@ -196,7 +232,11 @@
           </div>
           <div className="user-info">
             <div>
-							<span><a href={`/profile/${postData.poster.username}`}>{postData.poster.username}</a></span>
+              <span>
+                <a href={`/profile/${postData.poster.username}`}>
+                  {postData.poster.username}
+                </a>
+              </span>
             </div>
             <div className="profile-time-div">
               <span>{new Date(postData.update_at).toLocaleString()}</span>
@@ -204,7 +244,6 @@
           </div>
         </div>
         <div className="post-content-div">
-
           {isEditing ? (
             <>
               <div className="content">
@@ -215,12 +254,29 @@
                 ></textarea>
                 <div className="content-bnt-div">
                   <button onClick={saveEdit} className="content-btn save-btn">
-                    <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="100" height="100" viewBox="0 0 64 64">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      x="0px"
+                      y="0px"
+                      width="100"
+                      height="100"
+                      viewBox="0 0 64 64"
+                    >
                       <path d="M51.598,11.321c0.927,0.601,1.191,1.839,0.591,2.766l-24.62,38c-0.341,0.525-0.907,0.861-1.532,0.907	C25.987,52.998,25.938,53,25.89,53c-0.572,0-1.12-0.246-1.502-0.679L11.988,38.228c-0.729-0.83-0.648-2.093,0.181-2.823	c0.829-0.73,2.093-0.648,2.823,0.18l10.655,12.111l23.184-35.784C49.432,10.984,50.668,10.722,51.598,11.321z"></path>
                     </svg>
                   </button>
-                  <button onClick={cancelEdit} className="content-btn cancel-btn">
-                    <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="100" height="100" viewBox="0 0 64 64">
+                  <button
+                    onClick={cancelEdit}
+                    className="content-btn cancel-btn"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      x="0px"
+                      y="0px"
+                      width="100"
+                      height="100"
+                      viewBox="0 0 64 64"
+                    >
                       <path d="M 16 14 C 15.488 14 14.976938 14.194937 14.585938 14.585938 C 13.804937 15.366937 13.804937 16.633063 14.585938 17.414062 L 29.171875 32 L 14.585938 46.585938 C 13.804938 47.366938 13.804937 48.633063 14.585938 49.414062 C 14.976937 49.805062 15.488 50 16 50 C 16.512 50 17.023062 49.805062 17.414062 49.414062 L 32 34.828125 L 46.585938 49.414062 C 47.366938 50.195063 48.633063 50.195062 49.414062 49.414062 C 50.195063 48.633062 50.195062 47.366937 49.414062 46.585938 L 34.828125 32 L 49.414062 17.414062 C 50.195063 16.633063 50.195062 15.366938 49.414062 14.585938 C 48.633062 13.804938 47.366937 13.804938 46.585938 14.585938 L 32 29.171875 L 17.414062 14.585938 C 17.023062 14.194938 16.512 14 16 14 z"></path>
                     </svg>
                   </button>
@@ -234,16 +290,24 @@
                 <>
                   <div className="content-bnt-div">
                     <button className="content-btn edit-btn" onClick={editPost}>
-                      <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="100" height="100" viewBox="0 0 64 64">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        x="0px"
+                        y="0px"
+                        width="100"
+                        height="100"
+                        viewBox="0 0 64 64"
+                      >
                         <path d="M53.414,16.757c0.781,0.781,0.781,2.047,0,2.828L22.505,50.495l-10.201,3.412c-1.367,0.457-2.668-0.844-2.211-2.211	l3.412-10.201l30.909-30.909c0.781-0.781,2.047-0.781,2.828,0L53.414,16.757z M41.657,19L17.162,43.495L15,48l1,1l4.505-2.162	L45,22.343L41.657,19z"></path>
                       </svg>
                     </button>
                   </div>
-                </>) : (<></>)}
+                </>
+              ) : (
+                <></>
+              )}
             </>
           )}
-
-
         </div>
 
         <div className="reaction-data">
@@ -252,7 +316,9 @@
             <span>{likes}</span>
           </div>
           <div className="comment-count">
-            <span><a href={`/comments/${postData.id}`}>{comments} Comments</a></span>
+            <span>
+              <a href={`/comments/${postData.id}`}>{comments} Comments</a>
+            </span>
           </div>
         </div>
         <hr />
@@ -260,7 +326,18 @@
           <div className="like-btn-container" onClick={likePost}>
             <div>
               <div className="like-btn">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill={heartColor} stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="feather feather-heart">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill={heartColor}
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  className="feather feather-heart"
+                >
                   <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
                 </svg>
                 <span>{likeText}</span>
@@ -268,19 +345,35 @@
             </div>
           </div>
           <div className="comment-btn-container">
-            <label className="comment-btn" htmlFor={`comment-toggle-${postData.id}`}>
-            <div>
-                <i data-feather="message-square"></i><span>Comment</span>
-                </div>
+            <label
+              className="comment-btn"
+              htmlFor={`comment-toggle-${postData.id}`}
+            >
+              <div>
+                <i data-feather="message-square"></i>
+                <span>Comment</span>
+              </div>
             </label>
           </div>
         </div>
 
-        <input type="checkbox" id={`comment-toggle-${postData.id}`} className="comment-toggle" />
+        <input
+          type="checkbox"
+          id={`comment-toggle-${postData.id}`}
+          className="comment-toggle"
+        />
 
         <div className="comment-box">
-          <textarea name="comment" className="comment-area" onChange={updateCommentText} value={commentText} placeholder="Write your comment..."></textarea>
-          <button className="comment-submit-btn" onClick={submitComment}>Comment</button>
+          <textarea
+            name="comment"
+            className="comment-area"
+            onChange={updateCommentText}
+            value={commentText}
+            placeholder="Write your comment..."
+          ></textarea>
+          <button className="comment-submit-btn" onClick={submitComment}>
+            Comment
+          </button>
         </div>
       </div>
     );
@@ -288,93 +381,95 @@
 
   // Pagination Button Component
   function Pagination({ pageInfo, loadFun }) {
-
     function pageChange(toPage) {
       if (toPage > 0 && toPage <= pageInfo.total_pages) {
-        loadFun(toPage)
+        loadFun(toPage);
       }
     }
 
     return (
       <div className="pagination">
-        <button onClick={() => pageChange(pageInfo.current_page - 1)} disabled={!pageInfo.has_previous} >&lArr;Back</button>
-        <span>{pageInfo.current_page} of {pageInfo.total_pages}</span>
-        <button onClick={() => pageChange(pageInfo.current_page + 1)} disabled={!pageInfo.has_next}  >Next&rArr;</button>
+        <button
+          onClick={() => pageChange(pageInfo.current_page - 1)}
+          disabled={!pageInfo.has_previous}
+        >
+          &lArr;Back
+        </button>
+        <span>
+          {pageInfo.current_page} of {pageInfo.total_pages}
+        </span>
+        <button
+          onClick={() => pageChange(pageInfo.current_page + 1)}
+          disabled={!pageInfo.has_next}
+        >
+          Next&rArr;
+        </button>
       </div>
-    )
+    );
   }
-
 
   // Posts App for loading and Managing posts
 
   function PostsApp() {
-
-    const [isLoading, setLoading] = React.useState(true)
-    const [user, setUser] = React.useState({ id: 0, username: '' });
-    const [postList, setPostList] = React.useState([])
+    const [isLoading, setLoading] = React.useState(true);
+    const [user, setUser] = React.useState({ id: 0, username: "" });
+    const [postList, setPostList] = React.useState([]);
     const [pageData, setPageData] = React.useState({
       currentPage: 1,
       totalPage: 1,
       hasPrevious: false,
-      hasNext: false
-    })
-
+      hasNext: false,
+    });
 
     // Function for loading Post data and Page data then setting them in state
     function loadPostData(pageNumber = 1) {
-
-      const profile_user = '{{ profile_user.username }}'
-      setLoading(true)
+      const profile_user = "{{ profile_user.username }}";
+      setLoading(true);
       fetch(`/posts?profile_user=${profile_user}&page=${pageNumber}`)
-        .then(response => {
+        .then((response) => {
           if (!response.ok) {
-            throw new Error('Failed to fetch posts');
+            throw new Error("Failed to fetch posts");
           }
           return response.json();
         })
-        .then(data => {
-          setPostList(data.posts)
-          setPageData(data.page_data)
+        .then((data) => {
+          setPostList(data.posts);
+          setPageData(data.page_data);
           setUser({ id: data.user.id, username: data.user.username });
-          setLoading(false)
-        })
+          setLoading(false);
+        });
     }
 
-
-
     React.useEffect(() => {
-      loadPostData()
+      loadPostData();
     }, []);
 
     React.useEffect(() => {
-      feather.replace()
+      feather.replace();
     }, [postList]);
 
-
-
     if (isLoading) {
-      return (
-        <div className="loading-div">Loading...</div>
-      )
+      return <div className="loading-div">Loading...</div>;
     }
 
     if (postList.length === 0) {
       return (
-        <div>There are no Post. <a href="/#new-post-textarea">Post Something.</a></div>
-      )
+        <div>
+          There are no Post. <a href="/#new-post-textarea">Post Something.</a>
+        </div>
+      );
     }
 
     return (
       <>
-        {postList.map(post => (
+        {postList.map((post) => (
           <Post key={post.id} postData={post} user={user} />
         ))}
         <Pagination pageInfo={pageData} loadFun={loadPostData} />
       </>
-    )
+    );
   }
 
-
-  ReactDOM.createRoot(document.getElementById('App')).render(<PostsApp />);
+  ReactDOM.createRoot(document.getElementById("App")).render(<PostsApp />);
 </script>
 {% endblock %}

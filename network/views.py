@@ -1,4 +1,5 @@
 from django.contrib.auth import authenticate, login, logout
+from django.views.decorators.http import require_GET, require_POST
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.db import IntegrityError
@@ -66,8 +67,10 @@ def register(request):
     else:
         return render(request, "network/register.html")
 
+@require_POST
 @login_required(login_url='/login')
 def new_post(request):
+    '''Create a new post'''
     content = request.POST.get('content')
     if (content == ''):
         return HttpResponse('Bad Request, Empty Post Content' , status=400)
@@ -79,6 +82,9 @@ def new_post(request):
 
 # Post API with Parameters
 def posts(request, followed_posts=False):
+    '''
+    Return all posts in the database in JSON format with pagination
+    '''
     page = int(request.GET.get('page') or 1)
     profile_username = request.GET.get('profile_user')
     
@@ -94,6 +100,7 @@ def posts(request, followed_posts=False):
 
 
     paginator = Paginator(all_posts, 10)
+
     try:
         posts = paginator.page(page)
     except:
@@ -142,12 +149,12 @@ def following_posts(request):
 def following_view(request):
     return render(request, "network/following.html")
 
-
+@require_POST
 def like_post(request):
     if not request.user.is_authenticated:
         return JsonResponse({"error": "User not logged in"}, status=401, safe=False)
     
-    post_id = int(request.GET.get('post_id'))
+    post_id = int(json.loads(request.body).get('post_id'))
     try:
         post = Post.objects.get(id=post_id)
     except Post.DoesNotExist:
@@ -172,21 +179,21 @@ def view_comments(request, post_id):
     })
 
 @login_required(login_url='/login')
-@csrf_exempt
+@require_POST
 def comment(request):
-    if request.method == "POST":
-        data = json.loads(request.body)
-        post_id = int(data.get("post_id"))
-        post = Post.objects.get(id=post_id)
-        comment_text = data.get("commentText")
-        Comment.objects.create(comment_on=post, commenter=request.user, comment=comment_text).save()
-        return HttpResponseRedirect(f"/comments/{post_id}")
+    data = json.loads(request.body)
+    post_id = int(data.get("post_id"))
+    post = Post.objects.get(id=post_id)
+    comment_text = data.get("commentText")
+    Comment.objects.create(comment_on=post, commenter=request.user, comment=comment_text).save()
+    return HttpResponseRedirect(f"/comments/{post_id}")
 
+@require_POST
 def toggle_follow(request):
     if not request.user.is_authenticated:
         return JsonResponse({"error": "User not logged in"},status=401, safe=False)
     try:
-        user_id = int(request.GET.get('user_id'))
+        user_id = int(json.loads(request.body).get('user_id'))
         user = User.objects.get(id=user_id)
     except:
         return JsonResponse({"error":'Bad Request, User id don\'t exist'} , status=400, safe=False)
@@ -213,22 +220,21 @@ def profile_view(request, username):
         "is_following": profile_user.is_following(request.user) if request.user.is_authenticated else False
     })
 
-@csrf_exempt
+@require_POST
 def edit_post(request):
-    if request.method == "POST":
-        try:
-            data = json.loads(request.body)
-            post_id = int(data.get('post_id'))
-            post = Post.objects.get(id=post_id)
-            edited_content = data.get('edited_content')
-        except:
-            return JsonResponse({"error":'Bad Request'} , status=400, safe=False)
-        
-        if post.poster != request.user:
-            return JsonResponse({"error":'Only poster can edit his own posts'} , status=400, safe=False)
-        
-        post.content = edited_content
-        post.save()
+    try:
+        data = json.loads(request.body)
+        post_id = int(data.get('post_id'))
+        post = Post.objects.get(id=post_id)
+        edited_content = data.get('edited_content')
+    except:
+        return JsonResponse({"error":'Bad Request'} , status=400, safe=False)
+    
+    if post.poster != request.user:
+        return JsonResponse({"error":'Only poster can edit his own posts'} , status=400, safe=False)
+    
+    post.content = edited_content
+    post.save()
 
-        return JsonResponse({"content":post.content}, safe=False)
+    return JsonResponse({"content":post.content}, safe=False)
 
